@@ -122,6 +122,7 @@ label.cb input{width:18px;height:18px;accent-color:var(--accent)}
 .cbcard b{font-family:var(--f-display);font-size:34px;line-height:1;color:var(--accent)}
 .cbcard .hint{flex:1;min-width:200px}
 a.btn{text-decoration:none;display:inline-block}
+.demobar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--accent-soft);color:var(--fg);border-radius:var(--r);padding:10px 14px;font-size:13px}
 .screenbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .adminhead{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;background:var(--fg);color:var(--bg);border-radius:var(--r);padding:14px 16px}
 .adminhead .btn.ghost{color:var(--bg);border-color:color-mix(in srgb,var(--bg) 40%,transparent)}
@@ -150,6 +151,7 @@ a.btn{text-decoration:none;display:inline-block}
     <div class="hours"><b>Seg a sex</b> 09:00–19:00<br><b>Sábado</b> 09:00–17:00 · Domingo fechado</div>
   </header>
 
+  <div id="demoBar" class="demobar" hidden><span><b>Versão de demonstração.</b> Os agendamentos ficam salvos só neste aparelho. Na área da equipe, entre com qualquer e-mail e senha.</span><button class="btn sm ghost" type="button" id="demoReset">Recomeçar demo</button></div>
   <div id="dbNote" class="notice info" hidden></div>
 
   <!-- ===== TELA DO CLIENTE ===== -->
@@ -244,6 +246,7 @@ a.btn{text-decoration:none;display:inline-block}
 
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="demo.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 (function(){
@@ -663,6 +666,7 @@ $("tab-meus").addEventListener("click",carregarMeus);
   const cfg=window.APP_CONFIG||{};
   if(!window.supabase||!cfg.SUPABASE_URL||/SEU-PROJETO/.test(cfg.SUPABASE_URL)){aviso("O app ainda não foi ligado ao banco de dados. Preencha o arquivo config.js com os dados do Supabase.");renderAll();return}
   state.sb=window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY);
+  if(cfg.DEMO){$("demoBar").hidden=false;$("demoReset").onclick=()=>{try{localStorage.removeItem("meus");localStorage.removeItem("cliente")}catch(e){}window.__demoReset&&window.__demoReset()}}
   renderAll();
   await carregarConfig();carregarSaldo(true);carregarMeus();checarAdmin();
   setInterval(()=>{if(document.hidden)return;if(state.tela==="admin")carregarAdmin();else{carregarOcupados();if(state.view==="meus")carregarMeus()}},20000);
